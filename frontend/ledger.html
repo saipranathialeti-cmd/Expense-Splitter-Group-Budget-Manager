@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Expense Splitter - Ledger</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #edf1e8;
+            color: #26332d;
+            font-family: Georgia, "Times New Roman", serif;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image:
+                repeating-linear-gradient(
+                    to bottom,
+                    transparent 0px,
+                    transparent 31px,
+                    rgba(90, 110, 90, 0.10) 32px
+                );
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        header {
+            position: relative;
+            z-index: 2;
+            padding: 18px 40px 12px;
+            border-bottom: 1px solid rgba(90, 110, 90, 0.16);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 30px;
+            font-style: italic;
+            font-weight: normal;
+        }
+.details-btn {
+    display: inline-block;
+    background: #202b26;
+    color: white;
+    padding: 9px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-family: "Courier New", monospace;
+    font-size: 13px;
+}
+
+.details-btn:hover {
+    background: #34443c;
+}
+        #logoutBtn {
+    position: static;
+    background: #202b26;
+    color: white;
+    border: none;
+    padding: 9px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: "Courier New", monospace;
+    font-size: 14px;
+}
+
+        #logoutBtn:hover {
+            background: #34443c;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 30px 40px 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .grid {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .card {
+            background: #fffdfa;
+            border: 1px solid #cbd2c5;
+            border-radius: 5px;
+            padding: 24px;
+        }
+
+        .people-card h3,
+        .expense-card h2,
+        .balance-card h2,
+        .transactions-card h3 {
+            margin: 0 0 20px;
+            font-size: 23px;
+            font-style: italic;
+            font-weight: normal;
+        }
+
+        /* PEOPLE */
+
+        #membersList {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .person-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 8px 12px;
+            background: #f7f8f3;
+            border: 1px solid #cbd2c5;
+            border-radius: 4px;
+            font-family: "Courier New", monospace;
+            font-size: 14px;
+        }
+
+        .remove-member {
+    border: none;
+    background: transparent;
+    color: #68766e;
+    cursor: pointer;
+    font-family: "Courier New", monospace;
+    font-size: 16px;
+    padding: 0;
+    line-height: 1;
+}
+
+.remove-member:hover {
+    color: #202b26;
+}
+
+        .person-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* FORM */
+
+        .expense-card {
+            background: #fffdfa;
+        }
+
+        .expense-top {
+            display: grid;
+            grid-template-columns: minmax(280px, 1fr) 180px 210px;
+            gap: 18px;
+            align-items: end;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 7px;
+            font-family: "Courier New", monospace;
+            font-size: 14px;
+            color: #53675c;
+        }
+
+        input,
+        select {
+            width: 100%;
+            height: 44px;
+            padding: 9px 12px;
+            border: 1px solid #c7cec3;
+            border-radius: 4px;
+            background: #fff;
+            color: #26332d;
+            font-family: "Courier New", monospace;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #8d9b91;
+            box-shadow: 0 0 0 2px rgba(90, 110, 90, 0.12);
+        }
+
+        .split-section {
+            margin-top: 28px;
+        }
+
+        .split-heading {
+            display: block;
+            margin-bottom: 10px;
+            font-family: "Courier New", monospace;
+            font-size: 14px;
+            color: #53675c;
+        }
+
+        .member-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .member-option {
+            display: inline-flex;
+            align-items: center;
+            font-family: "Courier New", monospace;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .member-option input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            margin: 0 8px 0 0;
+            cursor: pointer;
+            accent-color: #202b26;
+        }
+
+        #splitPreview {
+            margin: 14px 0 0;
+            font-family: "Courier New", monospace;
+            font-size: 14px;
+            color: #587065;
+        }
+
+        #addPersonBtn,
+        #addExpenseBtn {
+            background: #202b26;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 11px 18px;
+            font-family: "Courier New", monospace;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        #addPersonBtn:hover,
+        #addExpenseBtn:hover {
+            background: #34443c;
+        }
+
+        #addExpenseBtn {
+            display: block;
+            margin: 22px 0 0 auto;
+        }
+
+        /* =========================
+           TRANSACTIONS
+        ========================= */
+
+        .transactions-card {
+            background: transparent;
+            border: none;
+            padding: 0;
+        }
+
+        .transactions-card h3 {
+            margin-bottom: 18px;
+            font-size: 25px;
+        }
+
+        .transactions-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fffdfa;
+            border: 1px solid #cbd2c5;
+            font-family: "Courier New", monospace;
+            font-size: 14px;
+        }
+
+        .transactions-table th {
+            text-align: left;
+            font-weight: normal;
+            color: #53675c;
+            background: #f3f5ef;
+            border-bottom: 1px solid #cbd2c5;
+            padding: 12px 14px;
+        }
+
+        .transactions-table td {
+            padding: 13px 14px;
+            border-bottom: 1px solid #dce1d8;
+            vertical-align: middle;
+        }
+
+        .transactions-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .amount-cell {
+            text-align: right;
+            font-weight: bold;
+        }
+
+        .delete-expense {
+            border: none;
+            background: transparent;
+            color: #68766e;
+            cursor: pointer;
+            font-family: "Courier New", monospace;
+            font-size: 16px;
+        }
+
+        .delete-expense:hover {
+            color: #202b26;
+        }
+
+        /* =========================
+           BALANCE
+        ========================= */
+
+        .balance-card {
+            background: transparent;
+            border: none;
+            padding: 0;
+        }
+
+        .balance-card h2 {
+            margin-bottom: 18px;
+            font-size: 25px;
+        }
+
+        .balance-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .balance-person {
+            background: #fffdfa;
+            border: 1px solid #cbd2c5;
+            border-radius: 5px;
+            padding: 18px;
+            font-family: "Courier New", monospace;
+        }
+
+        .balance-name {
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 14px;
+        }
+
+        .balance-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin: 7px 0;
+            font-size: 13px;
+        }
+
+        .balance-row strong {
+            font-weight: bold;
+        }
+
+        .balance-positive {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #dce1d8;
+            font-weight: bold;
+        }
+
+        .balance-negative {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #dce1d8;
+            font-weight: bold;
+        }
+
+        /* =========================
+           SETTLEMENTS
+        ========================= */
+
+        .settlements {
+            margin-top: 24px;
+        }
+
+        .settlements-title {
+            font-size: 19px;
+            font-style: italic;
+            margin-bottom: 12px;
+        }
+
+        .settlement-row {
+            background: #fffdfa;
+            border: 1px solid #cbd2c5;
+            padding: 13px 16px;
+            margin-bottom: 8px;
+            font-family: "Courier New", monospace;
+            font-size: 14px;
+        }
+
+        .empty {
+            color: #777;
+            font-family: "Courier New", monospace;
+            font-size: 14px;
+        }
+/* =========================
+   SETTLEMENT PAYMENTS
+========================= */
+
+.settlement-payment {
+    margin-top: 10px;
+    padding: 16px;
+    background: #fffdfa;
+    border: 1px solid #cbd2c5;
+    border-radius: 5px;
+    font-family: "Courier New", monospace;
+}
+
+.settlement-payment-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+.settlement-payment-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin: 6px 0;
+    font-size: 13px;
+}
+
+.settlement-remaining {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #dce1d8;
+    font-weight: bold;
+}
+
+.settlement-record-btn {
+    margin-top: 14px;
+    background: #202b26;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 9px 14px;
+    font-family: "Courier New", monospace;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.settlement-record-btn:hover {
+    background: #34443c;
+}
+
+.settlement-paid {
+    color: #587065;
+}
+
+.settlement-settled {
+    color: #587065;
+    font-weight: bold;
+}
+
+.payment-history {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid #dce1d8;
+}
+
+.payment-history-title {
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.payment-history-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 12px;
+    margin: 5px 0;
+}
+
+.delete-payment {
+    border: none;
+    background: transparent;
+    color: #68766e;
+    cursor: pointer;
+    font-family: "Courier New", monospace;
+    font-size: 15px;
+    padding: 0;
+}
+
+.delete-payment:hover {
+    color: #202b26;
+}
+/* =========================
+   DARK MODE
+========================= */
+
+.header-actions {
+    position: absolute;
+    top: 18px;
+    right: 40px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+#themeToggle {
+    background: #fffdfa;
+    color: #26332d;
+    border: 1px solid #cbd2c5;
+    padding: 9px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: "Courier New", monospace;
+    font-size: 14px;
+}
+
+#themeToggle:hover {
+    background: #f3f5ef;
+}
+
+/* DARK THEME */
+
+body.dark-mode {
+    background: #171b19;
+    color: #e8ece8;
+}
+
+body.dark-mode::before {
+    background-image:
+        repeating-linear-gradient(
+            to bottom,
+            transparent 0px,
+            transparent 31px,
+            rgba(180, 195, 185, 0.06) 32px
+        );
+}
+
+body.dark-mode header {
+    border-bottom-color: #303832;
+}
+
+body.dark-mode .card {
+    background: #202622;
+    border-color: #38423b;
+}
+
+body.dark-mode .expense-card {
+    background: #202622;
+}
+
+body.dark-mode .person-tag {
+    background: #282f2a;
+    border-color: #3b463e;
+    color: #e8ece8;
+}
+
+body.dark-mode input,
+body.dark-mode select {
+    background: #171b19;
+    color: #e8ece8;
+    border-color: #3b463e;
+}
+
+body.dark-mode input::placeholder {
+    color: #8d9991;
+}
+
+body.dark-mode input:focus,
+body.dark-mode select:focus {
+    border-color: #77877c;
+    box-shadow: 0 0 0 2px rgba(150, 170, 155, 0.12);
+}
+
+body.dark-mode .field label,
+body.dark-mode .split-heading {
+    color: #aab7ae;
+}
+
+body.dark-mode #splitPreview {
+    color: #aab7ae;
+}
+
+body.dark-mode .transactions-table {
+    background: #202622;
+    border-color: #38423b;
+    color: #e8ece8;
+}
+
+body.dark-mode .transactions-table th {
+    background: #282f2a;
+    color: #aab7ae;
+    border-bottom-color: #38423b;
+}
+
+body.dark-mode .transactions-table td {
+    border-bottom-color: #303832;
+}
+
+body.dark-mode .balance-person {
+    background: #202622;
+    border-color: #38423b;
+}
+
+body.dark-mode .balance-positive,
+body.dark-mode .balance-negative {
+    border-top-color: #38423b;
+}
+
+body.dark-mode .settlement-row {
+    background: #202622;
+    border-color: #38423b;
+}
+
+body.dark-mode .empty {
+    color: #8d9991;
+}
+
+body.dark-mode .remove-mark,
+body.dark-mode .delete-expense {
+    color: #9aa69e;
+}
+
+body.dark-mode .delete-expense:hover {
+    color: #ffffff;
+}
+
+body.dark-mode #groupSelect,
+body.dark-mode #createGroupBtn {
+    background: #282f2a;
+    color: #e8ece8;
+    border-color: #3b463e;
+}
+
+body.dark-mode #createGroupBtn {
+    background: #e8ece8;
+    color: #202622;
+}
+
+body.dark-mode #themeToggle {
+    background: #282f2a;
+    color: #e8ece8;
+    border-color: #3b463e;
+}
+
+body.dark-mode #themeToggle:hover {
+    background: #333c35;
+}
+
+body.dark-mode #logoutBtn {
+    background: #e8ece8;
+    color: #202622;
+}
+
+body.dark-mode #logoutBtn:hover {
+    background: #cfd7d1;
+}
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 850px) {
+            .expense-top {
+                grid-template-columns: 1fr;
+            }
+
+            .balance-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .transactions-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+
+      @media (max-width: 600px) {
+    header {
+        padding: 16px 20px 12px;
+    }
+
+    .header-actions {
+        right: 20px;
+        top: 14px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        max-width: calc(100% - 40px);
+    }
+
+    .container {
+        padding: 24px 20px 40px;
+    }
+
+    .person-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+            #personName {
+                width: 100%;
+            }
+
+            #addExpenseBtn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+    <h1>Expense Splitter</h1>
+
+    <div class="header-actions">
+        <select id="groupSelect" aria-label="Select group">
+            <option value="">No groups</option>
+        </select>
+
+        <button id="createGroupBtn" type="button">+ Create Group</button>
+
+        <button id="themeToggle" type="button">
+            🌙 Dark
+        </button>
+        <a href="details.html" class="details-btn">
+    Transactions & Balances
+</a>
+
+        <button id="logoutBtn">
+            Logout
+        </button>
+    </div>
+</header>
+
+    <div class="container">
+
+        <div class="grid">
+
+            <!-- PEOPLE -->
+
+            <div class="card people-card">
+
+                <h3>
+                    People in this group
+                </h3>
+
+                <div id="membersList">
+                    <p class="empty">
+                        No members added yet.
+                    </p>
+                </div>
+
+                <div class="person-controls">
+
+                    <input
+                        type="text"
+                        id="personName"
+                        placeholder="Add a name"
+                    >
+
+                    <button id="addPersonBtn">
+                        Add person
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- EXPENSE -->
+
+            <div class="card expense-card">
+
+                <h2>
+                    Record an expense
+                </h2>
+
+                <div class="expense-top">
+
+                    <div class="field">
+
+                        <label for="expenseDescription">
+                            What was it for
+                        </label>
+
+                        <input
+                            type="text"
+                            id="expenseDescription"
+                            placeholder="Groceries, cabin, gas..."
+                        >
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="expenseAmount">
+                            Amount
+                        </label>
+
+                        <input
+                            type="number"
+                            id="expenseAmount"
+                            placeholder="0.00"
+                            min="0.01"
+                            step="0.01"
+                        >
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="paidBySelect">
+                            Paid by
+                        </label>
+
+                        <select id="paidBySelect">
+
+                            <option value="">
+                                Select person
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div class="split-section">
+
+                    <span class="split-heading">
+                        Split among
+                    </span>
+
+                    <div
+                        id="splitMembers"
+                        class="member-options"
+                    >
+                        <p class="empty">
+                            No members available
+                        </p>
+                    </div>
+
+                    <p id="splitPreview">
+                        Select members to see the split amount.
+                    </p>
+
+                </div>
+
+
+                <button id="addExpenseBtn">
+                    Add to ledger
+                </button>
+
+            </div>
+
+
+            <!-- BALANCE -->
+
+            <div class="card balance-card">
+
+                <h2>
+                    Where things stand
+                </h2>
+
+                <div id="balanceList">
+
+                    <p class="empty">
+                        No balances yet.
+                    </p>
+
+                </div>
+                <div id="settlementPayments"></div>
+
+            </div>
+
+
+            <!-- TRANSACTIONS -->
+
+            <div class="card transactions-card">
+
+                <h3>
+                    Transactions
+                </h3>
+
+                <div id="transactionsList">
+
+                    <p class="empty">
+                        No transactions yet.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script src="ledger-integration.js"></script>
+    <script>
+    const themeToggle = document.getElementById("themeToggle");
+
+    // Load saved theme
+    const savedTheme = localStorage.getItem("expenseSplitterTheme");
+
+    if (savedTheme === "dark") {
+        document.body.classList.add("dark-mode");
+        themeToggle.textContent = "☀️ Light";
+    }
+
+    themeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+
+        const isDark =
+            document.body.classList.contains("dark-mode");
+
+        if (isDark) {
+            themeToggle.textContent = "☀️ Light";
+            localStorage.setItem(
+                "expenseSplitterTheme",
+                "dark"
+            );
+        } else {
+            themeToggle.textContent = "🌙 Dark";
+            localStorage.setItem(
+                "expenseSplitterTheme",
+                "light"
+            );
+        }
+    });
+</script>
+
+</body>
+
+</html>

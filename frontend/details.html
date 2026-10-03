@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Expense Splitter - Details</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        /* =========================
+           BODY
+        ========================= */
+
+        body {
+
+            margin: 0;
+
+            min-height: 100vh;
+
+            background: #edf1e8;
+
+            color: #26332d;
+
+            font-family:
+                Georgia,
+                "Times New Roman",
+                serif;
+
+        }
+
+
+        /* Notebook lines */
+
+        body::before {
+
+            content: "";
+
+            position: fixed;
+
+            inset: 0;
+
+            background-image:
+                repeating-linear-gradient(
+                    to bottom,
+                    transparent 0px,
+                    transparent 31px,
+                    rgba(90, 110, 90, 0.10) 32px
+                );
+
+            pointer-events: none;
+
+            z-index: 0;
+
+        }
+
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        header {
+
+            position: relative;
+
+            z-index: 2;
+
+            padding: 22px 40px;
+
+            border-bottom:
+                1px solid
+                rgba(90, 110, 90, 0.16);
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+        }
+
+
+        header h1 {
+
+            margin: 0;
+
+            font-size: 30px;
+
+            font-style: italic;
+
+            font-weight: normal;
+
+        }
+
+
+        .header-buttons {
+
+            display: flex;
+
+            gap: 10px;
+
+        }
+
+
+        .header-btn {
+
+            background: #202b26;
+
+            color: white;
+
+            border: none;
+
+            padding: 9px 16px;
+
+            border-radius: 4px;
+
+            cursor: pointer;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 13px;
+
+            text-decoration: none;
+
+        }
+
+
+        .header-btn:hover {
+
+            background: #34443c;
+
+        }
+
+
+        /* =========================
+           CONTAINER
+        ========================= */
+
+        .container {
+
+            width: 100%;
+
+            max-width: 1100px;
+
+            margin: 0 auto;
+
+            padding: 30px 40px 60px;
+
+            position: relative;
+
+            z-index: 1;
+
+        }
+
+
+        /* =========================
+           WELCOME
+        ========================= */
+
+        .welcome {
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .welcome h2 {
+
+            margin: 0 0 5px;
+
+            font-size: 25px;
+
+            font-style: italic;
+
+            font-weight: normal;
+
+        }
+
+
+        .welcome p {
+
+            margin: 0;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 14px;
+
+            color: #68766e;
+
+        }
+
+
+        /* =========================
+           SECTION
+        ========================= */
+
+        .section {
+
+            margin-bottom: 35px;
+
+        }
+
+
+        .section-title {
+
+            margin: 0 0 18px;
+
+            font-size: 25px;
+
+            font-style: italic;
+
+            font-weight: normal;
+
+        }
+
+
+        /* =========================
+           TRANSACTIONS TABLE
+        ========================= */
+
+        .table-wrapper {
+
+            overflow-x: auto;
+
+        }
+
+
+        .transactions-table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+            background: #fffdfa;
+
+            border: 1px solid #cbd2c5;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 14px;
+
+        }
+
+
+        .transactions-table th {
+
+            text-align: left;
+
+            font-weight: normal;
+
+            color: #53675c;
+
+            background: #f3f5ef;
+
+            border-bottom:
+                1px solid #cbd2c5;
+
+            padding: 13px 14px;
+
+        }
+
+
+        .transactions-table td {
+
+            padding: 13px 14px;
+
+            border-bottom:
+                1px solid #dce1d8;
+
+            vertical-align: middle;
+
+        }
+
+
+        .transactions-table tr:last-child td {
+
+            border-bottom: none;
+
+        }
+
+
+        .amount {
+
+            font-weight: bold;
+
+            text-align: right;
+
+        }
+
+
+        .delete-btn {
+
+            border: none;
+
+            background: transparent;
+
+            color: #68766e;
+
+            cursor: pointer;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 15px;
+
+        }
+
+
+        .delete-btn:hover {
+
+            color: #202b26;
+
+        }
+
+
+        /* =========================
+           BALANCE GRID
+        ========================= */
+
+        .balance-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 16px;
+
+        }
+
+
+        .balance-person {
+
+            background: #fffdfa;
+
+            border: 1px solid #cbd2c5;
+
+            border-radius: 5px;
+
+            padding: 18px;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+        }
+
+
+        .balance-name {
+
+            font-size: 17px;
+
+            font-weight: bold;
+
+            margin-bottom: 14px;
+
+        }
+
+
+        .balance-row {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            margin: 8px 0;
+
+            font-size: 13px;
+
+        }
+
+
+        .balance-result {
+
+            margin-top: 14px;
+
+            padding-top: 12px;
+
+            border-top:
+                1px solid #dce1d8;
+
+            font-weight: bold;
+
+        }
+
+
+        .gets {
+
+            color: #28613d;
+
+        }
+
+
+        .pays {
+
+            color: #8a3e35;
+
+        }
+
+
+        .settled {
+
+            color: #53675c;
+
+        }
+
+
+        /* =========================
+           SETTLEMENT PAYMENTS
+        ========================= */
+
+        .settlement-list {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 12px;
+
+        }
+
+
+        .settlement-card {
+
+            background: #fffdfa;
+
+            border: 1px solid #cbd2c5;
+
+            border-radius: 5px;
+
+            padding: 18px;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+        }
+
+
+        .settlement-title {
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            margin-bottom: 12px;
+
+        }
+
+
+        .settlement-row {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            margin: 7px 0;
+
+            font-size: 13px;
+
+        }
+
+
+        .remaining {
+
+            margin-top: 12px;
+
+            padding-top: 12px;
+
+            border-top:
+                1px solid #dce1d8;
+
+            font-weight: bold;
+
+        }
+
+
+        .record-payment-btn {
+
+            margin-top: 12px;
+
+            background: #202b26;
+
+            color: white;
+
+            border: none;
+
+            border-radius: 4px;
+
+            padding: 9px 15px;
+
+            cursor: pointer;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 13px;
+
+        }
+
+
+        .record-payment-btn:hover {
+
+            background: #34443c;
+
+        }
+
+
+        .settled-payment {
+
+            color: #28613d;
+
+        }
+
+
+        /* =========================
+           PAYMENT HISTORY
+        ========================= */
+
+        .history-title {
+
+            margin-top: 28px;
+
+            margin-bottom: 15px;
+
+            font-size: 21px;
+
+            font-style: italic;
+
+            font-weight: normal;
+
+        }
+
+
+        .payment-history {
+
+            background: #fffdfa;
+
+            border: 1px solid #cbd2c5;
+
+        }
+
+
+        .payment-history-row {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr 130px 80px;
+
+            gap: 10px;
+
+            padding: 13px 14px;
+
+            border-bottom:
+                1px solid #dce1d8;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 13px;
+
+            align-items: center;
+
+        }
+
+
+        .payment-history-row:last-child {
+
+            border-bottom: none;
+
+        }
+
+
+        .payment-history-header {
+
+            background: #f3f5ef;
+
+            color: #53675c;
+
+        }
+
+
+        .delete-payment {
+
+            border: none;
+
+            background: transparent;
+
+            cursor: pointer;
+
+            color: #68766e;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+        }
+
+
+        .delete-payment:hover {
+
+            color: #202b26;
+
+        }
+
+
+        /* =========================
+           EMPTY
+        ========================= */
+
+        .empty {
+
+            padding: 20px;
+
+            background: #fffdfa;
+
+            border: 1px solid #cbd2c5;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            color: #68766e;
+
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 850px) {
+
+            .balance-grid {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+
+            }
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            header {
+
+                padding: 18px 20px;
+
+                flex-direction: column;
+
+                align-items: flex-start;
+
+                gap: 12px;
+
+            }
+
+
+            .container {
+
+                padding:
+                    25px 20px 50px;
+
+            }
+
+
+            .balance-grid {
+
+                grid-template-columns: 1fr;
+
+            }
+
+
+            .payment-history-row {
+
+                grid-template-columns:
+                    1fr 1fr;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+
+    <header>
+
+        <h1>Expense Splitter</h1>
+
+
+        <div class="header-buttons">
+
+            <a
+                href="ledger.html"
+                class="header-btn"
+            >
+                ← Ledger
+            </a>
+
+
+            <button
+                id="logoutBtn"
+                class="header-btn"
+            >
+                Logout
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main class="container">
+
+
+        <!-- WELCOME -->
+
+        <div class="welcome">
+
+            <h2 id="welcomeMessage">
+                Details
+            </h2>
+
+            <p>
+                Transactions, balances and settlement payments.
+            </p>
+
+        </div>
+
+
+        <!-- =========================
+             TRANSACTIONS
+        ========================== -->
+
+        <section class="section">
+
+            <h2 class="section-title">
+                Transactions
+            </h2>
+
+
+            <div
+                id="transactionsContainer"
+                class="table-wrapper"
+            >
+
+                <p class="empty">
+                    Loading transactions...
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             WHERE THINGS STAND
+        ========================== -->
+
+        <section class="section">
+
+            <h2 class="section-title">
+                Where Things Stand
+            </h2>
+
+
+            <div
+                id="balanceContainer"
+                class="balance-grid"
+            >
+
+                <p class="empty">
+                    Loading balances...
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             SETTLEMENT PAYMENTS
+        ========================== -->
+
+        <section class="section">
+
+            <h2 class="section-title">
+                Settlement Payments
+            </h2>
+
+
+            <div
+                id="settlementContainer"
+            >
+
+                <p class="empty">
+                    Loading settlements...
+                </p>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <script src="details.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Ledger - Login</title>
+
+    <style>
+
+        /* =========================
+           PAGE
+        ========================= */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            background-color: #edf2e9;
+
+            font-family: Georgia, "Times New Roman", serif;
+
+            color: #26342d;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+
+        /* =========================
+           LOGIN CONTAINER
+        ========================= */
+
+        .login-container {
+
+            width: 385px;
+
+            background-color: #fffdf9;
+
+            border: 1px solid #c9d0c6;
+
+            padding: 30px;
+
+        }
+
+
+        /* =========================
+           TITLE
+        ========================= */
+
+        h1 {
+
+            text-align: center;
+
+            font-size: 34px;
+
+            margin-top: 0;
+            margin-bottom: 12px;
+
+            font-family:
+                Georgia,
+                "Times New Roman",
+                serif;
+
+            font-style: italic;
+
+            font-weight: normal;
+
+        }
+
+
+        .subtitle {
+
+            text-align: center;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 14px;
+
+            color: #617068;
+
+            margin-bottom: 30px;
+
+        }
+
+
+        /* =========================
+           LABELS
+        ========================= */
+
+        label {
+
+            display: block;
+
+            margin-bottom: 8px;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 14px;
+
+            color: #53645b;
+
+        }
+
+
+        /* =========================
+           INPUTS
+        ========================= */
+
+        input {
+
+            width: 100%;
+
+            padding: 11px;
+
+            margin-bottom: 20px;
+
+            border: 1px solid #c9d0c6;
+
+            background-color: #fffdf9;
+
+            color: #26342d;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 14px;
+
+            outline: none;
+
+        }
+
+
+        input:focus {
+
+            border-color: #697a70;
+
+        }
+
+
+        input::placeholder {
+
+            color: #9ba59f;
+
+        }
+
+
+        /* =========================
+           LOGIN BUTTON
+           ========================= */
+
+        button {
+
+            width: 100%;
+
+            padding: 13px;
+
+            border: none;
+
+            background-color: #26312c;
+
+            color: white;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 15px;
+
+            cursor: pointer;
+
+        }
+
+
+        button:hover {
+
+            background-color: #1b2420;
+
+        }
+
+
+        /* =========================
+           CREATE ACCOUNT
+           ========================= */
+
+        .create-account {
+
+            text-align: center;
+
+            margin-top: 25px;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 14px;
+
+            color: #53645b;
+
+        }
+
+
+        .create-account a {
+
+            color: #26342d;
+
+            text-decoration: underline;
+
+        }
+
+
+        .create-account a:hover {
+
+            color: #53645b;
+
+        }
+
+
+        /* =========================
+           INFORMATION TEXT
+           ========================= */
+
+        .info {
+
+            width: 385px;
+
+            text-align: center;
+
+            margin-top: 25px;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 13px;
+
+            line-height: 1.5;
+
+            color: #91a099;
+
+        }
+
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <div>
+
+        <!-- LOGIN CARD -->
+
+        <div class="login-container">
+
+            <h1>Log in</h1>
+
+            <div class="subtitle">
+                Log in to your Expense Splitter account
+            </div>
+
+
+            <form id="loginForm">
+
+
+                <!-- EMAIL -->
+
+                <label for="email">
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="name@gmail.com"
+                    required
+                >
+
+
+                <!-- PASSWORD -->
+
+                <label for="password">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Your password"
+                    required
+                >
+
+
+                <!-- LOGIN -->
+
+                <button type="submit">
+                    Log in
+                </button>
+
+
+            </form>
+
+
+            <!-- CREATE ACCOUNT -->
+
+            <div class="create-account">
+
+                New here?
+                <a href="signup.html">
+                    Create an account
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- INFORMATION -->
+
+        <div class="info">
+
+            Only gmail.com addresses are accepted.
+            Accounts and expenses live only in this browser
+            tab and clear on reload.
+
+        </div>
+
+    </div>
+
+
+    <!-- YOUR EXISTING LOGIN JAVASCRIPT -->
+
+    <script src="login-example.js"></script>
+
+</body>
+
+</html>
